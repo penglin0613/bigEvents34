@@ -22,21 +22,27 @@
             <b>管理员</b>
         </div>
         <div class="menu">
-            <div class="level01 active"><a href="main_count.html" target="main_frame"><i class="iconfont icon-yidiandiantubiao04"></i><span>首页</span></a></div>
+            <div class="level01 active"><a href="main_count.html" target="main_frame"><i
+                        class="iconfont icon-yidiandiantubiao04"></i><span>首页</span></a></div>
             <div class="level01"><a href="#"><i class="iconfont icon-icon-article"></i><span>文章管理</span><b
                         class="iconfont icon-arrowdownl"></b></a></div>
             <ul class="level02">
-                <li><a href="article_list.html" target="main_frame"><i class="iconfont icon-previewright"></i><span>文章列表</span></a></li>
-                <li><a href="article_release.html" target="main_frame"><i class="iconfont icon-previewright"></i><span>发表文章</span></a></li>
-                <li><a  href="article_category.html" target="main_frame"><i class="iconfont icon-previewright"></i><span>文章类别管理</span></a></li>
+                <li><a href="article_list.html" target="main_frame"><i
+                            class="iconfont icon-previewright"></i><span>文章列表</span></a></li>
+                <li><a href="article_release.html" target="main_frame"><i
+                            class="iconfont icon-previewright"></i><span>发表文章</span></a></li>
+                <li><a href="article_category.html" target="main_frame"><i
+                            class="iconfont icon-previewright"></i><span>文章类别管理</span></a></li>
             </ul>
 
-            <div class="level01"><a href="comment_list.html" target="main_frame"><i class="iconfont icon-comment"></i><span>评论管理</span></a></div>
-            <div class="level01"><a  href="user.html" target="main_frame"><i class="iconfont icon-user"></i><span>个人中心</span></a></div>
+            <div class="level01"><a href="comment_list.html" target="main_frame"><i
+                        class="iconfont icon-comment"></i><span>评论管理</span></a></div>
+            <div class="level01"><a href="user.html" target="main_frame"><i
+                        class="iconfont icon-user"></i><span>个人中心</span></a></div>
         </div>
     </div>
 
-    <div class="header_bar">        
+    <div class="header_bar">
         <form class="search_form">
             <input type="text" placeholder="请输入搜索内容">
             <i class="iconfont icon-search"></i>
@@ -44,65 +50,124 @@
         <div class="user_center_link">
             <a href="user.html" onclick="setMenu(3,0)" target="main_frame">个人中心</a>
             <img src="images/2.jpg" alt="person">
-            <a href="#"><i class="iconfont icon-tuichu"></i> 退出</a>
+            <a href="#" id="btn_logout"><i class="iconfont icon-tuichu"></i> 退出</a>
         </div>
     </div>
 
     <div class="main" id="main_body">
-        <iframe src="main_count.html" frameborder="0" id="main_frame" name="main_frame" frameborder="0" scrolling="auto"></iframe>
+        <iframe src="main_count.html" frameborder="0" id="main_frame" name="main_frame" frameborder="0"
+            scrolling="auto"></iframe>
     </div>
 
-
+    <!-- bs的模态框 Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示框!!!</h4>
+                </div>
+                <div class="modal-body">
+                    退出失败!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         var $level01 = $('.level01');
         var $subli = $('.level02 li')
-        $level01.click(function(){
+        $level01.click(function () {
             $level01.not($(this)).removeClass('active');
             $(this).addClass('active');
 
-            if($(this).next().hasClass('level02')){
+            if ($(this).next().hasClass('level02')) {
                 $(this).next().slideToggle();
                 $(this).find('b').toggleClass('rotate0');
-            }else{
-                $subli.removeClass('active'); 
+            } else {
+                $subli.removeClass('active');
             }
         })
 
-        $subli.click(function(){
+        $subli.click(function () {
             $subli.not($(this)).removeClass('active');
             $(this).addClass('active');
 
-            if(!$(this).parent().prev().hasClass('active')){
+            if (!$(this).parent().prev().hasClass('active')) {
                 $level01.removeClass('active');
                 $(this).parent().prev().addClass('active');
             }
         })
 
-        function resizeFrame(){
+        function resizeFrame() {
             var frame_w = $('#main_body').outerWidth();
-			var frame_h = $('#main_body').outerHeight();
-			$('#main_frame').css({'width':frame_w,'height':frame_h});
+            var frame_h = $('#main_body').outerHeight();
+            $('#main_frame').css({ 'width': frame_w, 'height': frame_h });
         }
 
         resizeFrame();
 
-        $(window).resize(function(){
+        $(window).resize(function () {
             resizeFrame();
         })
 
 
-        function setMenu(m,n){
-           $level01.eq(m).addClass('active').siblings().not('.level02').removeClass('active');
-           if(m!=1){              
-              $('.level02').slideUp(); 
-           }else{
-              $('.level02').slideDown();
-              $('.level02').children().eq(n).addClass('active').siblings().removeClass('active');
-           }
+        function setMenu(m, n) {
+            $level01.eq(m).addClass('active').siblings().not('.level02').removeClass('active');
+            if (m != 1) {
+                $('.level02').slideUp();
+            } else {
+                $('.level02').slideDown();
+                $('.level02').children().eq(n).addClass('active').siblings().removeClass('active');
+            }
         }
 
     </script>
 
+    <!-- 引入bs的js文件 -->
+    <script src="./js/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        $(function () {
+            //给退出的a标签设置一个点击事件
+            $('#btn_logout').on('click', function (e) {
+                e.preventDefault();
+                //发送ajax请求,得到数据
+                $.ajax({
+                    type: 'post',
+                    url: 'https://autumnfish.cn/big/admin/logout',
+                    success: function (backData) {
+                        //console.log(backData);
+                        //判断
+                        if (backData.code == 200) {
+                            //退出成功,跳转到登录页面
+                            window.location.href = './login.html';
+                        } else {
+                            // alert('退出失败');
+                            //调用bs的模态框的方法弹出模态框.
+                            $('#myModal').modal({
+                                keyboard:true
+                            });
+                        }
+                    }
+                });
+            });
+
+
+            /*
+            步骤:
+            1.给退出的a标签设置一个点击事件.
+                取消他的默认跳转
+            2.发送ajax请求,得到数据
+                如果退出成功,跳转到登录页面.
+            */
+        });
+    </script>
+
 </body>
+
 </html>
