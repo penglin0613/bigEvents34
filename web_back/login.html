@@ -31,6 +31,54 @@
 
     </div> 
 
+
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <script>
+        $(function(){
+            //给登录按钮设置一个点击事件,取消默认跳转
+            $('.input_sub').on('click',function(e){
+                e.preventDefault();
+                //获取用户输入的账号和密码
+                var userName = $('.input_txt').val().trim();
+                var password = $('.input_pass').val().trim();
+                //做一个非空判断,如果为空,弹框提示一下,如果不为空,继续
+                if(userName == "" || password == ""){
+                    alert("账号或密码为空,请正确输入!");
+                    return;
+                }
+                //发送ajax请求,接受到数据接口返回的数据
+                $.ajax({
+                    type:'post',
+                    url:'https://autumnfish.cn/big/admin/login',
+                    data:{
+                        user_name:userName,
+                        password:password
+                    },
+                    success:function(backData){
+                        //console.log(backData);
+                        //判断
+                        if(backData.code != 200){
+                            alert("账号密码错误,请重新输入!");
+                        }else {
+                            //账号密码正确,就应该登录成功,跳转到后台管理首页.
+                            window.location.href = './index.html';
+                        }
+                    }
+                });
+            });
+
+            /*
+            步骤:
+            1.给登录按钮设置一个点击事件,取消默认跳转
+                获取用户输入的账号和密码
+                做一个非空判断,如果为空,弹框提示一下,如果不为空,继续
+            2.发送ajax请求,接受到数据接口返回的数据
+                根据这个数据判断
+                如果账号密码正确,就应该登录成功跳转到后台管理的首页.index.html
+                如果账号密码错误,就弹框提示
+            */
+        });
+    </script>    
 </body>
 
 </html>
