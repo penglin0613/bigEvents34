@@ -24,19 +24,20 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">用户名称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control username" id="inputEmail3" value="李思思">
+                        <input type="text" name='username' class="form-control username" id="inputEmail3" value="李思思">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">昵称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control nickname" id="inputEmail3" value="思思">
+                        <input type="text" name="nickname" class="form-control nickname" id="inputEmail3" value="思思">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">邮箱：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control email" id="inputEmail3" value="lisisi@126.com">
+                        <input type="text" name="email" class="form-control email" id="inputEmail3"
+                            value="lisisi@126.com">
                     </div>
                 </div>
 
@@ -44,14 +45,15 @@
                     <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
                     <div class="col-sm-10">
                         <img src="images/2.jpg" alt="" class="user_pic">
-                        <input type="file" id="exampleInputFile">
+                        <input type="file" id="exampleInputFile" name="user_pic">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">密码：</label>
                     <div class="col-sm-4">
-                        <input type="password" class="form-control password" id="inputEmail3" value="12345678">
+                        <input type="password" name="password" class="form-control password" id="inputEmail3"
+                            value="12345678">
                     </div>
                 </div>
 
@@ -85,11 +87,46 @@
                     // $('input.password').val(backData.data.password);
                     //上面的四句话可以用下面这一个forin搞定.
                     for (var key in backData.data) {
-                        $('input.'+key).val(backData.data[key]);
+                        $('input.' + key).val(backData.data[key]);
                     }
 
                     $('img.user_pic').attr('src', backData.data.user_pic);
                 }
+            });
+
+
+            //图像预览
+            $('#exampleInputFile').on('change', function () {
+                //获取选中的图片文件.
+                var icon = this.files[0];
+                //根据这个图片文件 创建一个url.
+                var url = URL.createObjectURL(icon);
+                //把这个url交给预览用的img
+                $('img.user_pic').attr('src', url);
+            });
+
+
+            //给修改按钮设置一个点击事件,注意取消默认 跳转.
+            $('.btn-success').on('click', function (e) {
+                e.preventDefault();
+                //创建一个formData获取form表单里面的所有数据
+                var formData = new FormData($('form')[0]);
+                //发送ajax请求
+                $.ajax({
+                    type: 'post',
+                    url: 'http://localhost:8000/admin/userinfo_edit',
+                    data: formData,
+                    //下面这句话的意思是不要给我设置请求头.因为我这里发送数据使用的是formData,不需要设置请求头
+                    contentType: false,
+                    //下面这句话的意思是不要把我传递的参数转成key=value这种格式的字符串.
+                    processData: false,
+                    success: function (backData) {
+                        console.log(backData);
+                        if(backData.code == 200){
+                           console.log('修改成功!');
+                        }
+                    }
+                });
             });
 
         });
