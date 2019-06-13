@@ -156,14 +156,34 @@
                     }
                 });
             });
-
-
             /*
             步骤:
             1.给退出的a标签设置一个点击事件.
                 取消他的默认跳转
             2.发送ajax请求,得到数据
                 如果退出成功,跳转到登录页面.
+            */
+
+
+
+
+            $.ajax({
+                type:'get',
+                url:'http://localhost:8000/admin/getuser',
+                success:function(backData){
+                    //console.log(backData);
+                    //渲染左边
+                    $('.user_info span').html('欢迎&nbsp;&nbsp;'+backData.data.nickname);
+                    $('.user_info img').attr('src',backData.data.user_pic);
+                    //渲染右边
+                    $('.user_center_link img').attr('src',backData.data.user_pic);
+                }
+            });
+            /*
+            步骤:
+                1. 进入到首页之后
+                2. 通过用户信息接口获取用户的数据
+                3. 渲染到页面上
             */
         });
     </script>
