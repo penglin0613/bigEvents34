@@ -180,22 +180,23 @@
                     //会把form表单里面有name属性的元素的值.拼接成name=value&name2=value2这种格式的字符串
                     //id=8&name=军事2&slug=junshi    
 
-                    
+
                     //发送ajax请求修改.
                     $.ajax({
-                        type:'post',
-                        url:'http://localhost:8000/admin/category_edit',
+                        type: 'post',
+                        url: 'http://localhost:8000/admin/category_edit',
                         // data:{
                         //     id:editId,
                         //     name:editName,
                         //     slug:editNickName
                         // },
-                        data:data1,
-                        success:function(backData){
+                        data: data1,
+                        success: function (backData) {
                             // console.log(backData);
                             //修改成功后,重新渲染数据
-                            if(backData.code == 200){
+                            if (backData.code == 200) {
                                 getCategory();
+                                //把弹出的模态框中的input给清空.
                             }
                         }
                     });
@@ -247,6 +248,10 @@
 
             //点击新增分类 按钮, 弹出的模态框里面的样式/名字还原
             $('#addCategory').on('click', function () {
+                $('#recipient-id').val("");
+                $('#recipient-name').val("");
+                $('#recipient-nickname').val("");
+
                 $('#addModal .modal-title').html('新增分类');
                 $('#model_add').text('新增').removeClass('btn-success');
             });
