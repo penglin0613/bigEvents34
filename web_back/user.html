@@ -123,8 +123,21 @@
                     processData: false,
                     success: function (backData) {
                         console.log(backData);
-                        if(backData.code == 200){
-                           console.log('修改成功!');
+                        if (backData.code == 200) {
+                            console.log('修改成功!');
+                            //重新的获取用户的基本信息,给主页的左边和右边的用户头像名称修改值.
+                            $.ajax({
+                                type: 'get',
+                                url: 'http://localhost:8000/admin/getuser',
+                                success: function (backData) {
+                                    //console.log(backData);
+                                    //渲染左边
+                                    parent.$('.user_info span').html('欢迎&nbsp;&nbsp;' + backData.data.nickname);
+                                    parent.$('.user_info img').attr('src', backData.data.user_pic);
+                                    //渲染右边
+                                    parent.$('.user_center_link img').attr('src', backData.data.user_pic);
+                                }
+                            });
                         }
                     }
                 });
