@@ -136,13 +136,15 @@
             <td>{{$value.slug}}</td>
             <td class="text-center">
                 <a href="javascript:editTr({&quot;id&quot;:&quot;1&quot;,&quot;slug&quot;:&quot;uncategorized&quot;,&quot;name&quot;:&quot;未分类&quot;});" class="btn btn-info btn-xs">编辑</a>
-                <a href="javascript:deleteTr( {{$value.id}} );" class="btn btn-danger btn-xs">删除</a>
+                <a href="javascript:void(0);"  data-id="{{$value.id}}" class="btn btn-danger btn-xs btn-delete">删除</a>
             </td>
         </tr>
         {{/each}}
     </script>
     <script>
         $(function () {
+            //获取所有的文章分类封装函数
+            function getCategory() {
             /*
             获取文章分类信息
             步骤
@@ -152,26 +154,28 @@
             1. 结合模板引擎来渲染
             */
             $.ajax({
-                type: 'get',
-                url: 'http://localhost:8000/admin/category_search',
-                success: function (backData) {
-                    //console.log(backData);
-                    if (backData.code == 200) {
-                        //通过模板引擎把返回的数据渲染到页面
-                        //调用模板引擎的方法
-                        var resHtml = template('tmp_cate', backData);
-                        $('tbody').html(resHtml);
+                    type: 'get',
+                    url: 'http://localhost:8000/admin/category_search',
+                    success: function (backData) {
+                        //console.log(backData);
+                        if (backData.code == 200) {
+                            //通过模板引擎把返回的数据渲染到页面
+                            //调用模板引擎的方法
+                            var resHtml = template('tmp_cate', backData);
+                            $('tbody').html(resHtml);
+                        }
                     }
-                }
-            });
+                });
+            }
 
+            //页面一进来要调用一次getCategory();
+            getCategory();
 
-            //点击模态框中的确认按钮
+            //点击模态框中的  确认按钮
             $('#model_add').click(function () {
                 //获取用户要新增的 文字类别和别名
                 var recipient_name = $('#recipient-name').val();
                 var recipient_nickname = $('#recipient-nickname').val();
-
                 //发送ajax请求
                 $.ajax({
                     type: 'post',
@@ -184,19 +188,7 @@
                         //console.log(backData);
                         if (backData.code == 200) {
                             //新增成功后,重新的发送一次ajax请求加载所有的文字类别
-                            $.ajax({
-                                type: 'get',
-                                url: 'http://localhost:8000/admin/category_search',
-                                success: function (backData) {
-                                    //console.log(backData);
-                                    if (backData.code == 200) {
-                                        //通过模板引擎把返回的数据渲染到页面
-                                        //调用模板引擎的方法
-                                        var resHtml = template('tmp_cate', backData);
-                                        $('tbody').html(resHtml);
-                                    }
-                                }
-                            });
+                            getCategory();
                         }
                     }
                 });
@@ -205,6 +197,35 @@
                 $('#addModal').modal('hide');
             });
 
+
+
+            //给删除按钮设置点击事件.委托方式注册.
+            $('tbody').on('click', 'a.btn-delete', function () {
+                var that = $(this); //把当前点击的a标签存起来.
+
+                //获取当前这个a标签的自定义属性data-id里面存放的id,
+                var id = $(this).attr('data-id');
+                console.log(id);
+                //发送ajax请求,删除这条记录.
+                $.ajax({
+                    type: 'post',
+                    url: 'http://localhost:8000/admin/category_delete',
+                    data: {
+                        id: id
+                    },
+                    success: function (backData) {
+                        console.log(backData);
+                        if(backData.code == 200){
+                            //getCategory();
+                            //思考题:
+                            //这里渲染数据的目的是为了获取新的数据,让用户觉得数据是真的被删掉了.
+                            //但是如果数据很多,重新渲染的话.就会速度很慢, 所以我们可以搞一个投机的方式
+                            //直接在dom树中把这一条数据给移除就ok.
+                            that.parent().parent().remove();
+                        }
+                    }
+                });
+            });
 
         });
     </script>
