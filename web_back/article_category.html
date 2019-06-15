@@ -91,6 +91,7 @@
                 </div>
                 <div class="modal-body">
                     <form>
+                        <input type="text" id="recipient-id">
                         <div class="form-group">
                             <label for="recipient-name" class="control-label">分类名称:</label>
                             <input type="text" class="form-control" id="recipient-name">
@@ -168,6 +169,28 @@
             $('#model_add').click(function () {
                 //判断这个按钮有没有btn-success类,如果有这个类,那就是保存
                 if ($(this).hasClass('btn-success')) {
+                    //获取用户 修改之后的 类型名  和类型别名.
+                    var editId = $('#recipient-id').val();
+                    var editName =  $('#recipient-name').val();
+                    var editNickName =  $('#recipient-nickname').val();
+                    console.log(editId +":"+editName +":" +editNickName);
+                    //发送ajax请求修改.
+                    $.ajax({
+                        type:'post',
+                        url:'http://localhost:8000/admin/category_edit',
+                        data:{
+                            id:editId,
+                            name:editName,
+                            slug:editNickName
+                        },
+                        success:function(backData){
+                            // console.log(backData);
+                            //修改成功后,重新渲染数据
+                            if(backData.code == 200){
+                                getCategory();
+                            }
+                        }
+                    });
 
                 } else {
                     //获取用户要新增的 文字类别和别名
@@ -199,12 +222,14 @@
             //给编辑按钮设置点击事件.委托方式注册
             $('tbody').on('click', 'a.btn-edit', function () {
                 //获取当前点击的这个编辑按钮 对应的文章类别名和文章类别别名
+                var id = $(this).attr('data-id');;//获取当前点击的编辑按钮 中的自定义属性存放的id
                 var name = $(this).parent().prev().prev().text(); //文章类型名
                 var slug = $(this).parent().prev().text(); //文章类型别名
                 // console.log(name+":"+slug);
                 //把这两个值赋值给弹出来的模态框的input标签.
                 $('#recipient-name').val(name);
                 $('#recipient-nickname').val(slug);
+                $('#recipient-id').val(id);
 
 
                 $('#addModal .modal-title').html('修改分类');
