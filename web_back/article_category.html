@@ -73,7 +73,8 @@
                 <tfoot>
                     <tr>
                         <td colspan="3" class="text-center">
-                            <a href="#" id="addCategory" class="btn btn-success" data-toggle="modal" data-target="#addModal">新增分类</a>
+                            <a href="#" id="addCategory" class="btn btn-success" data-toggle="modal"
+                                data-target="#addModal">新增分类</a>
                         </td>
                     </tr>
                 </tfoot>
@@ -163,28 +164,32 @@
             //页面一进来要调用一次getCategory();
             getCategory();
 
-            //点击模态框中的  确认按钮
+            //点击模态框中的  保存/新增 按钮
             $('#model_add').click(function () {
-                //获取用户要新增的 文字类别和别名
-                var recipient_name = $('#recipient-name').val();
-                var recipient_nickname = $('#recipient-nickname').val();
-                //发送ajax请求
-                $.ajax({
-                    type: 'post',
-                    url: 'http://localhost:8000/admin/category_add',
-                    data: {
-                        name: recipient_name,
-                        slug: recipient_nickname
-                    },
-                    success: function (backData) {
-                        //console.log(backData);
-                        if (backData.code == 200) {
-                            //新增成功后,重新的发送一次ajax请求加载所有的文字类别
-                            getCategory();
-                        }
-                    }
-                });
+                //判断这个按钮有没有btn-success类,如果有这个类,那就是保存
+                if ($(this).hasClass('btn-success')) {
 
+                } else {
+                    //获取用户要新增的 文字类别和别名
+                    var recipient_name = $('#recipient-name').val();
+                    var recipient_nickname = $('#recipient-nickname').val();
+                    //发送ajax请求
+                    $.ajax({
+                        type: 'post',
+                        url: 'http://localhost:8000/admin/category_add',
+                        data: {
+                            name: recipient_name,
+                            slug: recipient_nickname
+                        },
+                        success: function (backData) {
+                            console.log(backData);
+                            if (backData.code == 200) {
+                                //新增成功后,重新的发送一次ajax请求加载所有的文字类别
+                                getCategory();
+                            }
+                        }
+                    });
+                }
                 //隐藏模态框
                 $('#addModal').modal('hide');
             });
@@ -193,6 +198,14 @@
 
             //给编辑按钮设置点击事件.委托方式注册
             $('tbody').on('click', 'a.btn-edit', function () {
+                //获取当前点击的这个编辑按钮 对应的文章类别名和文章类别别名
+                var name = $(this).parent().prev().prev().text(); //文章类型名
+                var slug = $(this).parent().prev().text(); //文章类型别名
+                // console.log(name+":"+slug);
+                //把这两个值赋值给弹出来的模态框的input标签.
+                $('#recipient-name').val(name);
+                $('#recipient-nickname').val(slug);
+
 
                 $('#addModal .modal-title').html('修改分类');
                 $('#model_add').text('保存').addClass('btn-success');
@@ -200,7 +213,7 @@
             });
 
             //点击新增分类 按钮, 弹出的模态框里面的样式/名字还原
-            $('#addCategory').on('click',function(){
+            $('#addCategory').on('click', function () {
                 $('#addModal .modal-title').html('新增分类');
                 $('#model_add').text('新增').removeClass('btn-success');
             });
