@@ -73,7 +73,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="3" class="text-center">
-                            <a href="#" class="btn btn-success" data-toggle="modal" data-target="#addModal">新增分类</a>
+                            <a href="#" id="addCategory" class="btn btn-success" data-toggle="modal" data-target="#addModal">新增分类</a>
                         </td>
                     </tr>
                 </tfoot>
@@ -119,14 +119,6 @@
             $('#addModal').modal('hide');
         });
 
-
-
-        $('.category_table').delegate('a', 'click', function () {
-            if ($(this).hasClass('btn-info')) {
-                $('#addModal .modal-title').html('修改分类名称');
-                $('#addModal').modal('show');
-            }
-        })      
     </script>
 
     <script id="tmp_cate" type="text/html">
@@ -135,7 +127,7 @@
             <td>{{$value.name}}</td>
             <td>{{$value.slug}}</td>
             <td class="text-center">
-                <a href="javascript:editTr({&quot;id&quot;:&quot;1&quot;,&quot;slug&quot;:&quot;uncategorized&quot;,&quot;name&quot;:&quot;未分类&quot;});" class="btn btn-info btn-xs">编辑</a>
+                <a href="javascript:void(0);"  data-id="{{$value.id}}" class="btn btn-info btn-xs btn-edit">编辑</a>
                 <a href="javascript:void(0);"  data-id="{{$value.id}}" class="btn btn-danger btn-xs btn-delete">删除</a>
             </td>
         </tr>
@@ -145,15 +137,15 @@
         $(function () {
             //获取所有的文章分类封装函数
             function getCategory() {
-            /*
-            获取文章分类信息
-            步骤
-            1. 进入页面之后
-            2. 通过ajax获取数据
-            3. 数据获取到之后渲染到页面上
-            1. 结合模板引擎来渲染
-            */
-            $.ajax({
+                /*
+                获取文章分类信息
+                步骤
+                1. 进入页面之后
+                2. 通过ajax获取数据
+                3. 数据获取到之后渲染到页面上
+                1. 结合模板引擎来渲染
+                */
+                $.ajax({
                     type: 'get',
                     url: 'http://localhost:8000/admin/category_search',
                     success: function (backData) {
@@ -199,6 +191,23 @@
 
 
 
+            //给编辑按钮设置点击事件.委托方式注册
+            $('tbody').on('click', 'a.btn-edit', function () {
+
+                $('#addModal .modal-title').html('修改分类');
+                $('#model_add').text('保存').addClass('btn-success');
+                $('#addModal').modal('show');
+            });
+
+            //点击新增分类 按钮, 弹出的模态框里面的样式/名字还原
+            $('#addCategory').on('click',function(){
+                $('#addModal .modal-title').html('新增分类');
+                $('#model_add').text('新增').removeClass('btn-success');
+            });
+
+
+
+
             //给删除按钮设置点击事件.委托方式注册.
             $('tbody').on('click', 'a.btn-delete', function () {
                 var that = $(this); //把当前点击的a标签存起来.
@@ -215,7 +224,7 @@
                     },
                     success: function (backData) {
                         console.log(backData);
-                        if(backData.code == 200){
+                        if (backData.code == 200) {
                             //getCategory();
                             //思考题:
                             //这里渲染数据的目的是为了获取新的数据,让用户觉得数据是真的被删掉了.
