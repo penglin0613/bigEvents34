@@ -281,7 +281,7 @@
             <td class="text-center">{{v.state}}</td>
             <td class="text-center">
                 <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
-                <a href="javascript:void();" data-id="{{v.id}}" class="btn btn-danger btn-xs">删除</a>
+                <a href="javascript:void();" data-id="{{v.id}}" class="btn btn-danger btn-xs btn-delete">删除</a>
             </td>
             </tr>
         {{/each}}
@@ -389,6 +389,27 @@
 
             getArticle(1);
         });
+
+        //点击删除按钮删除文章.
+        $('tbody').on('click','a.btn-delete',function(){
+            var that = $(this);
+            //获取到这个删除按钮中保存的id
+            var id = $(this).attr('data-id');
+            console.log(id);
+            //发送ajax请求去删除文章.
+            $.ajax({
+                url:'http://localhost:8000/admin/article_delete',
+                data:{
+                    id:id
+                },
+                success : function(backData){
+                    if(backData.code == 200){
+                        that.parent().parent().remove();
+                    }
+                }
+            });
+        });;
+        
 
 
         //一进到页面就要筛选一次(所有分类,所有状态)
