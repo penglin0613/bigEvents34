@@ -230,7 +230,7 @@
             {{else}}
             <li>
             {{/if}}    
-                <a href="#"><img src="{{v.cover}}" alt=""></a>
+                <a href="./article.html?id={{v.id}}"><img src="{{v.cover}}" alt=""></a>
                 <p>{{v.title}}</p>
             </li>
         {{/each}}
@@ -250,7 +250,7 @@
                     perpage:5
                 },
                 success:function(backData){
-                    //console.log(backData)
+                    console.log(backData)
                     if(backData.code == 200){
                         //通过模板引擎渲染.
                         var resHtml = template('tmp_article',backData);
