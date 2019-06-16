@@ -28,20 +28,20 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章标题：</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputEmail3" placeholder="文章标题">
+                        <input type="text" name='title' class="form-control" id="inputEmail3" placeholder="文章标题">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">文章封面：</label>
                     <div class="col-sm-10">
                         <img src="" alt="" style="height: 100px;"><br>
-                        <input type="file" id="exampleInputFile">
+                        <input name="cover" type="file" id="exampleInputFile">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章类别：</label>
                     <div class="col-sm-4">
-                        <select class="form-control">
+                        <select name="type" class="form-control">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -55,7 +55,7 @@
                     <div class="col-sm-4">
 
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="YYYY-MM-DD" id="dateinput">
+                            <input type="text" name="date" class="form-control" placeholder="YYYY-MM-DD" id="dateinput">
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="button"
                                     onclick="jeDate('#dateinput',{trigger:false,format: 'YYYY-MM-DD'})"><i
@@ -67,14 +67,14 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章内容：</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" id="rich_content" name="content" placeholder="文章内容">
+                        <textarea class="form-control" id="rich_content"  placeholder="文章内容">
                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda fugiat illo nihil molestias ab. Laborum eius non atque, totam sapiente quae obcaecati assumenda ratione inventore pariatur maiores, qui libero delectus.
-                            </textarea>
+                        </textarea>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success">发布</button>
+                        <button type="submit" class="btn btn-success btn-release">发布</button>
                         <button type="submit" class="btn btn-default">存为草稿</button>
                     </div>
                 </div>
@@ -111,6 +111,31 @@
                         $('.form-control').html(resHtml);
                     }
                 }
+            });
+
+
+            //给发布按钮设置一个点击事件.
+            $('.btn-release').on('click',function(e){
+                e.preventDefault();
+                
+                //创建一个formData对象.
+                var formData1 = new FormData($('form')[0]);
+                //把富文本中的内容 和state值追加到formData1中.
+                formData1.append('content',tinyMCE.activeEditor.getContent());
+                formData1.append('state','草稿');
+
+                //发送ajax请求.
+                $.ajax({
+                    type:'post',
+                    data:formData1,
+                    url:'http://localhost:8000/admin/article_publish',
+                    contentType:false,
+                    processData:false,
+                    success:function(backData){
+                        console.log(backData);
+                    }
+
+                });
             });
 
 
