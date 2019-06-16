@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/main.css">
     <script src="js/jquery-1.12.4.min.js"></script>
     <script src="./js/template-web.js"></script>
+    <script src="./js/jquery.twbsPagination.js"></script>
 </head>
 
 <body>
@@ -24,7 +25,7 @@
                 <div class="col-xs-6">
                     <form class="form-inline">
                         <select id="selCategory" name="" class="form-control input-sm">
-                            <option>所有分类</option>
+                            <option value="">所有分类</option>
                             <option>未分类</option>
                             <option>奇趣事</option>
                             <option>会生活</option>
@@ -32,8 +33,8 @@
                         </select>
                         <select id="selStatus" name="" class="form-control input-sm">
                             <option value="">所有状态</option>
-                            <option >草稿</option>
-                            <option >已发布</option>
+                            <option>草稿</option>
+                            <option>已发布</option>
                         </select>
                         <button id="btnSearch" class="btn btn-default btn-sm">筛选</button>
                     </form>
@@ -307,40 +308,91 @@
                 if (backData.code == 200) {
                     //通过模板引擎把返回的数据渲染到页面
                     //调用模板引擎的方法
-                    var resHtml = template('tmp_article_cate',backData);
+                    var resHtml = template('tmp_article_cate', backData);
                     $('#selCategory').html(resHtml);
                 }
             }
         });
-    
 
-        //点击筛选按钮,发送ajax请求,获取对应类型的所有文章.
-        $('#btnSearch').on('click',function(e){
-            e.preventDefault();
 
+        //声明一个变量,用来记录总的页码.
+        var mytotalPage = 10;
+
+
+        //分页插件的使用.
+        //使用动态获取总页数  的分页插件的方法.
+        var $pagination = $('.pagination');
+        var defaultOpts = {
+            totalPages: mytotalPage,
+            visiblePages: 7,
+            first: '首页',
+            last: '尾页',
+            next: '下一页',
+            prev: '上一页',
+            onPageClick: function (event, page) {
+                //console.log(event); //点击事件.
+                //console.log(page);//点击的页码
+                getArticle(page);
+            }
+        };
+        $pagination.twbsPagination(defaultOpts);
+
+
+        //筛选文章封装成一个方法.
+        function getArticle(myPage) {
             //获取文章类别和 文章状态
             var type = $('#selCategory').val();
             var state = $('#selStatus').val();
             //发送ajax请求.
             $.ajax({
                 //type:'get', //如果type是get可以省略不写.因为默认就是get
-                url:'http://localhost:8000/admin/search',
-                data:{
-                    key:'',
-                    type:type,
-                    state:state,
-                    page:1,
-                    perpage:5
-                },success:function(backData){
+                url: 'http://localhost:8000/admin/search',
+                data: {
+                    key: '',
+                    type: type,
+                    state: state,
+                    page: myPage,
+                    perpage: 5
+                }, success: function (backData) {
                     console.log(backData);
-                    if(backData.code == 200){
-                        var resHtml = template('tmp_article_list',backData);
+                    if (backData.code == 200) {
+                        var resHtml = template('tmp_article_list', backData);
                         $('tbody').html(resHtml);
+
+                        
+                        //分页插件的总页数获取,总页码条重新生成
+                        var totalPages = backData.totalPage;
+                        if (mytotalPage != totalPages) { //如果通过ajax响应回来的数据得到的页面和 刚才的页码不一样
+                            mytotalPage = totalPages;     //那就应该去执行下面的这些代码,重新的生成页码条.
+
+                            var currentPage = 1; //当前页
+                           
+                            $pagination.twbsPagination('destroy');
+                            $pagination.twbsPagination($.extend({}, defaultOpts, {
+                                startPage: currentPage,
+                                totalPages: totalPages
+                            }));
+                        }
+
+
                     }
                 }
             });
+        }
+
+
+
+
+        //点击筛选按钮,发送ajax请求,获取对应类型的所有文章.
+        $('#btnSearch').on('click', function (e) {
+            e.preventDefault();
+
+            getArticle(1);
         });
 
+
+        //一进到页面就要筛选一次(所有分类,所有状态)
+        $('#btnSearch').trigger('click');
 
 
     </script>
