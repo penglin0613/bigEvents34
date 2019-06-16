@@ -221,6 +221,47 @@
         <p>电话：0755-****888    粤ICP备*******8号</p>
     </div>
 
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <script src="./js/template-web.js"></script>
+    <script id="tmp_article" type="text/html">
+        {{each data v}}
+            {{if $index == 0}}
+            <li class="first">
+            {{else}}
+            <li>
+            {{/if}}    
+                <a href="#"><img src="{{v.cover}}" alt=""></a>
+                <p>{{v.title}}</p>
+            </li>
+        {{/each}}
+    </script>
+    <script>
+        $(function(){
+
+            //一进来就发送ajax请求,获取最先的5篇文章.
+            $.ajax({
+                // type:'get', 可以省略不写
+                url:'http://localhost:8000/admin/search',
+                data:{
+                    key:"",
+                    type:"",
+                    state:"",
+                    page:1,
+                    perpage:5
+                },
+                success:function(backData){
+                    //console.log(backData)
+                    if(backData.code == 200){
+                        //通过模板引擎渲染.
+                        var resHtml = template('tmp_article',backData);
+                        $('.focus_list').html(resHtml);
+                    }
+                }
+            });
+
+
+        });
+    </script>
 </body>
 
 </html>
